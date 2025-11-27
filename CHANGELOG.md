@@ -1,3 +1,10 @@
+## [0.6.5] - November 28, 2025
+
+* Upgrade Flutter SDK to at least version 3.38.0 for adding support UIScene migration
+* Migrate implementation of `rootViewController` in order UIScene breaking change
+* Recreate ios project on example app to get the latest default configuration
+* Bump minimum iOS deployment target to 13.0
+
 ## [0.6.4] - October 30, 2024
 
 * Add null safety to example app
