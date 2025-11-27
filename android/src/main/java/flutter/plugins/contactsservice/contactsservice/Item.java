@@ -22,14 +22,6 @@ public class Item {
         this.type = type;
     }
 
-    HashMap<String, String> toMap() {
-        HashMap<String, String> result = new HashMap<>();
-        result.put("label", label);
-        result.put("value", value);
-        result.put("type", String.valueOf(type));
-        return result;
-    }
-
     public static Item fromMap(HashMap<String, String> map) {
         String label = map.get("label");
         String value = map.get("value");
@@ -89,5 +81,13 @@ public class Item {
                     return "other";
             }
         }
+    }
+
+    HashMap<String, String> toMap() {
+        HashMap<String, String> result = new HashMap<>();
+        result.put("label", label);
+        result.put("value", value);
+        result.put("type", String.valueOf(type));
+        return result;
     }
 }

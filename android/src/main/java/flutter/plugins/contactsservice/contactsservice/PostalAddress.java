@@ -26,18 +26,6 @@ public class PostalAddress {
         this.type = type;
     }
 
-    HashMap<String, String> toMap() {
-        HashMap<String, String> result = new HashMap<>();
-        result.put("label", label);
-        result.put("street", street);
-        result.put("city", city);
-        result.put("postcode", postcode);
-        result.put("region", region);
-        result.put("country", country);
-        result.put("type", String.valueOf(type));
-        return result;
-    }
-
     public static PostalAddress fromMap(HashMap<String, String> map) {
         String label = map.get("label");
         String street = map.get("street");
@@ -65,5 +53,17 @@ public class PostalAddress {
             }
             return "other";
         }
+    }
+
+    HashMap<String, String> toMap() {
+        HashMap<String, String> result = new HashMap<>();
+        result.put("label", label);
+        result.put("street", street);
+        result.put("city", city);
+        result.put("postcode", postcode);
+        result.put("region", region);
+        result.put("country", country);
+        result.put("type", String.valueOf(type));
+        return result;
     }
 }
