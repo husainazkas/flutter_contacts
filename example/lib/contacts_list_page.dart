@@ -85,9 +85,9 @@ class _ContactListPageState extends State<ContactListPage> {
         },
       ),
       body: SafeArea(
-        child: _contacts != null
+        child: _contacts.isNotEmpty
             ? ListView.builder(
-                itemCount: _contacts?.length ?? 0,
+                itemCount: _contacts.length,
                 itemBuilder: (BuildContext context, int index) {
                   Contact c = _contacts.elementAt(index);
                   return ListTile(
@@ -99,7 +99,7 @@ class _ContactListPageState extends State<ContactListPage> {
                                     contactOnDeviceHasBeenUpdated,
                               )));
                     },
-                    leading: (c.avatar != null && c.avatar!.length > 0)
+                    leading: (c.avatar != null && c.avatar!.isNotEmpty)
                         ? CircleAvatar(backgroundImage: MemoryImage(c.avatar!))
                         : CircleAvatar(child: Text(c.initials())),
                     title: Text(c.displayName ?? ""),
