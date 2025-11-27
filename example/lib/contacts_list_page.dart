@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:contacts_service_example/main.dart';
 
 import 'package:contacts_service/contacts_service.dart';
