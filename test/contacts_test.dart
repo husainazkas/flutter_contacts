@@ -5,10 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const MethodChannel channel =
-      MethodChannel('github.com/clovisnicolas/flutter_contacts');
+  const MethodChannel channel = MethodChannel(
+    'github.com/clovisnicolas/flutter_contacts',
+  );
   final List<MethodCall> log = <MethodCall>[];
-  channel.setMockMethodCallHandler((MethodCall methodCall) async {
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
     log.add(methodCall);
     switch (methodCall.method) {
       case 'getContacts':
@@ -19,12 +21,12 @@ void main() {
           {
             'givenName': 'givenName2',
             'postalAddresses': [
-              {'label': 'label'}
+              {'label': 'label'},
             ],
             'emails': [
-              {'label': 'label'}
+              {'label': 'label'},
             ],
-            'birthday': '1994-02-01'
+            'birthday': '1994-02-01',
           },
         ];
       case 'getAvatar':
@@ -54,10 +56,13 @@ void main() {
     final avatar = await ContactsService.getAvatar(contact);
 
     expect(log, <Matcher>[
-      isMethodCall('getAvatar', arguments: <String, dynamic>{
-        'contact': contact.toMap(),
-        'photoHighResolution': true,
-      })
+      isMethodCall(
+        'getAvatar',
+        arguments: <String, dynamic>{
+          'contact': contact.toMap(),
+          'photoHighResolution': true,
+        },
+      ),
     ]);
 
     expect(avatar, Uint8List.fromList([0, 1, 2, 3]));
@@ -100,36 +105,45 @@ void main() {
     await ContactsService.getAvatar(contact, photoHighRes: false);
 
     expect(log, <Matcher>[
-      isMethodCall('getAvatar', arguments: <String, dynamic>{
-        'contact': contact.toMap(),
-        'photoHighResolution': false,
-      })
+      isMethodCall(
+        'getAvatar',
+        arguments: <String, dynamic>{
+          'contact': contact.toMap(),
+          'photoHighResolution': false,
+        },
+      ),
     ]);
   });
 
   test('should add contact', () async {
-    await ContactsService.addContact(Contact(
-      givenName: 'givenName',
-      emails: [Item(label: 'label')],
-      phones: [Item(label: 'label')],
-      postalAddresses: [PostalAddress(label: 'label')],
-    ));
+    await ContactsService.addContact(
+      Contact(
+        givenName: 'givenName',
+        emails: [Item(label: 'label')],
+        phones: [Item(label: 'label')],
+        postalAddresses: [PostalAddress(label: 'label')],
+      ),
+    );
     expectMethodCall(log, 'addContact');
   });
 
   test('should delete contact', () async {
-    await ContactsService.deleteContact(Contact(
-      givenName: 'givenName',
-      emails: [Item(label: 'label')],
-      phones: [Item(label: 'label')],
-      postalAddresses: [PostalAddress(label: 'label')],
-    ));
+    await ContactsService.deleteContact(
+      Contact(
+        givenName: 'givenName',
+        emails: [Item(label: 'label')],
+        phones: [Item(label: 'label')],
+        postalAddresses: [PostalAddress(label: 'label')],
+      ),
+    );
     expectMethodCall(log, 'deleteContact');
   });
 
   test('should provide initials for contact', () {
-    Contact contact1 =
-        Contact(givenName: "givenName", familyName: "familyName");
+    Contact contact1 = Contact(
+      givenName: "givenName",
+      familyName: "familyName",
+    );
     Contact contact2 = Contact(givenName: "givenName");
     Contact contact3 = Contact(familyName: "familyName");
     Contact contact4 = Contact();
@@ -141,65 +155,84 @@ void main() {
   });
 
   test('should update contact', () async {
-    await ContactsService.updateContact(Contact(
-      givenName: 'givenName',
-      emails: [Item(label: 'label')],
-      phones: [Item(label: 'label')],
-      postalAddresses: [PostalAddress(label: 'label')],
-    ));
+    await ContactsService.updateContact(
+      Contact(
+        givenName: 'givenName',
+        emails: [Item(label: 'label')],
+        phones: [Item(label: 'label')],
+        postalAddresses: [PostalAddress(label: 'label')],
+      ),
+    );
     expectMethodCall(log, 'updateContact');
   });
 
   test('should show contacts are equal', () {
-    Contact contact1 =
-        Contact(givenName: "givenName", familyName: "familyName", emails: [
-      Item(label: "Home", value: "example@example.com"),
-      Item(label: "Work", value: "example2@example.com"),
-    ]);
-    Contact contact2 =
-        Contact(givenName: "givenName", familyName: "familyName", emails: [
-      Item(label: "Work", value: "example2@example.com"),
-      Item(label: "Home", value: "example@example.com"),
-    ]);
+    Contact contact1 = Contact(
+      givenName: "givenName",
+      familyName: "familyName",
+      emails: [
+        Item(label: "Home", value: "example@example.com"),
+        Item(label: "Work", value: "example2@example.com"),
+      ],
+    );
+    Contact contact2 = Contact(
+      givenName: "givenName",
+      familyName: "familyName",
+      emails: [
+        Item(label: "Work", value: "example2@example.com"),
+        Item(label: "Home", value: "example@example.com"),
+      ],
+    );
     expect(contact1 == contact2, true);
     expect(contact1.hashCode, contact2.hashCode);
   });
 
   test('should produce a valid merged contact', () {
-    Contact contact1 =
-        Contact(givenName: "givenName", familyName: "familyName", emails: [
-      Item(label: "Home", value: "home@example.com"),
-      Item(label: "Work", value: "work@example.com"),
-    ], phones: [], postalAddresses: []);
-    Contact contact2 = Contact(familyName: "familyName", phones: [
-      Item(label: "Mobile", value: "111-222-3344")
-    ], emails: [
-      Item(label: "Mobile", value: "mobile@example.com"),
-    ], postalAddresses: [
-      PostalAddress(
+    Contact contact1 = Contact(
+      givenName: "givenName",
+      familyName: "familyName",
+      emails: [
+        Item(label: "Home", value: "home@example.com"),
+        Item(label: "Work", value: "work@example.com"),
+      ],
+      phones: [],
+      postalAddresses: [],
+    );
+    Contact contact2 = Contact(
+      familyName: "familyName",
+      phones: [Item(label: "Mobile", value: "111-222-3344")],
+      emails: [Item(label: "Mobile", value: "mobile@example.com")],
+      postalAddresses: [
+        PostalAddress(
           label: 'Home',
           street: "1234 Middle-of Rd",
           city: "Nowhere",
           postcode: "12345",
           region: null,
-          country: null)
-    ]);
-    Contact mergedContact =
-        Contact(givenName: "givenName", familyName: "familyName", emails: [
-      Item(label: "Home", value: "home@example.com"),
-      Item(label: "Mobile", value: "mobile@example.com"),
-      Item(label: "Work", value: "work@example.com"),
-    ], phones: [
-      Item(label: "Mobile", value: "111-222-3344")
-    ], postalAddresses: [
-      PostalAddress(
+          country: null,
+        ),
+      ],
+    );
+    Contact mergedContact = Contact(
+      givenName: "givenName",
+      familyName: "familyName",
+      emails: [
+        Item(label: "Home", value: "home@example.com"),
+        Item(label: "Mobile", value: "mobile@example.com"),
+        Item(label: "Work", value: "work@example.com"),
+      ],
+      phones: [Item(label: "Mobile", value: "111-222-3344")],
+      postalAddresses: [
+        PostalAddress(
           label: 'Home',
           street: "1234 Middle-of Rd",
           city: "Nowhere",
           postcode: "12345",
           region: null,
-          country: null)
-    ]);
+          country: null,
+        ),
+      ],
+    );
 
     expect(contact1 + contact2, mergedContact);
   });
@@ -228,7 +261,7 @@ void main() {
       "phones": [],
       "postalAddresses": [],
       "avatar": null,
-      "birthday": null
+      "birthday": null,
     });
   });
 }
@@ -250,10 +283,10 @@ void expectMethodCall(List<MethodCall> log, String methodName) {
         'androidAccountType': null,
         'androidAccountName': null,
         'emails': [
-          {'label': 'label', 'value': null}
+          {'label': 'label', 'value': null},
         ],
         'phones': [
-          {'label': 'label', 'value': null}
+          {'label': 'label', 'value': null},
         ],
         'postalAddresses': [
           {
@@ -262,11 +295,11 @@ void expectMethodCall(List<MethodCall> log, String methodName) {
             'city': null,
             'postcode': null,
             'region': null,
-            'country': null
-          }
+            'country': null,
+          },
         ],
         'avatar': null,
-        'birthday': null
+        'birthday': null,
       },
     ),
   ]);
