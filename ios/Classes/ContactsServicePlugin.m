@@ -6,7 +6,7 @@
 #endif
 
 @implementation ContactsServicePlugin
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftContactsServicePlugin registerWithRegistrar:registrar];
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+    [SwiftContactsServicePlugin registerWithRegistrar:registrar];
 }
 @end
