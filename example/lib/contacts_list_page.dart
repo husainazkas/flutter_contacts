@@ -39,8 +39,8 @@ class _ContactListPageState extends State<ContactListPage> {
   }
 
   void updateContact() async {
-    Contact ninja = _contacts
-        .firstWhere((contact) => contact.familyName?.startsWith("Ninja") == true);
+    Contact ninja = _contacts.firstWhere(
+        (contact) => contact.familyName?.startsWith("Ninja") == true);
     ninja.avatar = null;
     await ContactsService.updateContact(ninja);
 
